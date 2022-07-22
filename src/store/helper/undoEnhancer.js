@@ -12,6 +12,7 @@ export const undoEnhancer = (reducer, option = {}) => {
         redoType: "@@undoEnhancer/REDO", // 重做操作类型
         clearHistoryType: "@@undoEnhancer/CLEAR_HISTORY", // 清空历史记录类型
         include: [], // 需要加入日志流水的操作类型
+        openMergeOption: false, // 开启该配置，会对相同路径修改的操作合并为一个操作行为
         ...option
     }
 
@@ -23,7 +24,7 @@ export const undoEnhancer = (reducer, option = {}) => {
 
     return (state = initialState, action) => {
         const { type, payload } = action
-        console.log(type);
+
         switch (type) {
             case config.undoType:
                 // 撤销操作
@@ -44,14 +45,13 @@ export const undoEnhancer = (reducer, option = {}) => {
             case config.clearHistoryType:
                 // 清空历史记录
                 History = clearHistory(History)
-                console.log(History);
                 return History.present
 
             default:
-                // 打断撤销重做操作时
-                History = clearRedoStack(History)
-
                 if (isInclude(type)) {
+                    // 打断撤销重做操作时
+                    History = clearRedoStack(History)
+                    // console.log("----clearRedoStack--History----", History)
                     const [nextState, patches, inversePatches] = produceWithPatches(
                         state,
                         draft => reducer(draft, action)
@@ -59,8 +59,10 @@ export const undoEnhancer = (reducer, option = {}) => {
                     if (config.limit && History.undoStack.length >= config.limit) {
                         History.undoStack.shift()
                     }
-                    History = insertHistory(History, type, nextState, patches, inversePatches)
-                    console.log("----History----", History)
+                    if (patches.length > 0 && inversePatches.length > 0) {
+                        History = insertHistory(History, type, nextState, patches, inversePatches, config.openMergeOption)
+                        console.log("----History----", History)
+                    }
                     return nextState
                 }
                 return reducer(state, action)
@@ -96,7 +98,22 @@ function clearRedoStack(history) {
 }
 
 // 推入撤销重做记录
-function insertHistory(history, actionType, nextState, patches, inversePatches) {
+function insertHistory(history, actionType, nextState, patches, inversePatches, openMergeOption) {
+
+    const { undoStack } = history
+    const last = undoStack[undoStack.length - 1]
+
+    // 对相同路径修改的操作合并为一个操作行为
+    if (openMergeOption && last && last.actionType === actionType && last.patches.length === patches.length && patches.length > 0) {
+        const isSameAllPath = patches.every((patch, index) => patch.path.join("") === last.patches[index].path.join("") && patch.op === last.patches[index].op)
+        if (isSameAllPath) {
+            last.patches = patches
+            return {
+                ...history,
+                undoStack,
+            }
+        }
+    }
     return {
         ...history,
         undoStack: [...history.undoStack, { actionType, patches, inversePatches }],
@@ -127,5 +144,3 @@ function redoOption(history) {
         present: nextState,
     }
 }
-
-

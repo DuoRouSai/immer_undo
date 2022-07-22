@@ -41,12 +41,13 @@ export const incrementByAsync = createAsyncThunk(
 
 export const { increment, decrement } = countSlice.actions;
 
-export default countSlice.reducer
+// export default countSlice.reducer
 
-// export default undoEnhancer(countSlice.reducer, {
-//     limit: 6,
-//     undoType: "@@Count/UNDO", // 撤销操作类型
-//     redoType: "@@Count/REDO", // 重做操作类型
-//     clearHistoryType: "@@Count/CLEAR_HISTORY", // 清空历史记录类型
-//     include: [increment(), decrement(), incrementByAsync.fulfilled()]
-// })
+export default undoEnhancer(countSlice.reducer, {
+    limit: 6,
+    undoType: "@@Count/UNDO", // 撤销操作类型
+    redoType: "@@Count/REDO", // 重做操作类型
+    clearHistoryType: "@@Count/CLEAR_HISTORY", // 清空历史记录类型
+    include: [increment(), decrement(), incrementByAsync.fulfilled()],
+    openMergeOption: true, // 是否开启合并选项
+})

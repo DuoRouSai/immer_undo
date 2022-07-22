@@ -9,16 +9,16 @@ import produce, { enablePatches, current, produceWithPatches, applyPatches } fro
 function HomePage({ dispatch, count, user }) {
   return (
     <div>
-      <div className='User'>
-        <div>User撤销重做:
+      <div className='Count'>
+        <div>Count撤销重做:
           <button onClick={() => dispatch({
-            type: '@@User/UNDO'
+            type: '@@Count/UNDO'
           })}>撤销</button>
           <button onClick={() => dispatch({
-            type: '@@User/REDO'
+            type: '@@Count/REDO'
           })}>重做</button>
           <button onClick={() => dispatch({
-            type: '@@User/CLEAR_HISTORY'
+            type: '@@Count/CLEAR_HISTORY'
           })}>清空历史记录</button>
         </div>
         <div>{`日入斗金:${count}`}</div>
@@ -42,6 +42,17 @@ function HomePage({ dispatch, count, user }) {
         </button>
       </div>
       <div>
+        <div>User撤销重做:
+          <button onClick={() => dispatch({
+            type: '@@User/UNDO'
+          })}>撤销</button>
+          <button onClick={() => dispatch({
+            type: '@@User/REDO'
+          })}>重做</button>
+          <button onClick={() => dispatch({
+            type: '@@User/CLEAR_HISTORY'
+          })}>清空历史记录</button>
+        </div>
         <div>{`${JSON.stringify(user)}`}</div>
         <button
           onClick={() => dispatch(setUser())}
