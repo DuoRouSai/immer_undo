@@ -111,6 +111,7 @@ function insertHistory(history, actionType, nextState, patches, inversePatches, 
             return {
                 ...history,
                 undoStack,
+                present: nextState
             }
         }
     }
