@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, current } from "@reduxjs/toolkit";
-import { undoEnhancer } from "../helper/undoEnhancer";
+import { undoEnhancer } from "redux-immer-undo";
 
 const initialState = {
     name: "DuoRouSai",

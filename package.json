@@ -12,6 +12,7 @@
     "lodash": "^4.17.21",
     "react-redux": "^8.0.2",
     "redux-batched-subscribe": "^0.1.6",
+    "redux-immer-undo": "^1.2.2",
     "redux-undo": "^1.0.1",
     "umi": "^4.0.4"
   },

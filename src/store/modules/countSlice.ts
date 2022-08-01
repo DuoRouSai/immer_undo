@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { undoEnhancer } from "../helper/undoEnhancer";
+import { undoEnhancer } from "redux-immer-undo";
 
 export interface CountState {
     value: number;
@@ -49,5 +49,5 @@ export default undoEnhancer(countSlice.reducer, {
     redoType: "@@Count/REDO", // 重做操作类型
     clearHistoryType: "@@Count/CLEAR_HISTORY", // 清空历史记录类型
     include: [increment(), decrement(), incrementByAsync.fulfilled()],
-    openMergeOption: true, // 是否开启合并选项
+    openMergeOption: false, // 是否开启合并选项
 })
